@@ -70,8 +70,8 @@ const postCommentTable = async () => {
         post_id INT NOT NULL,
         comment VARCHAR(300) NOT NULL,
         createdOn VARCHAR(50) NOT NULL,
-        FOREIGN KEY(post_id) REFERENCES posts(post_id),
-        FOREIGN KEY(user_id) REFERENCES users(user_id)
+        FOREIGN KEY(post_id) REFERENCES posts(post_id) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE
     )`;
 
     try{

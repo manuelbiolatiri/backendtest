@@ -33,21 +33,17 @@ const postController = {
                 const values = [title, post, user_id, new Date().toLocaleString()];
                 const createQuery = await pool.query(create, values);
 
-                if ( createQuery.rows[0].user_id === user_id) {
-                    // post post response
-                    res.status(201).json({
-                        status: 'success',
-                        data: {
-                            message: 'post successfully posted',
-                            post_id: createQuery.rows[0].post_id,
-                            createdOn: createQuery.rows[0].createdon,
-                            title: createQuery.rows[0].title,
-                            post: createQuery.rows[0].post
-                        }
-                    })
-                } else {
-                    
-                }
+                // post post response
+                res.status(201).json({
+                    status: 'success',
+                    data: {
+                        message: 'post successfully posted',
+                        post_id: createQuery.rows[0].post_id,
+                        createdOn: createQuery.rows[0].createdon,
+                        title: createQuery.rows[0].title,
+                        post: createQuery.rows[0].post
+                    }
+                })
             });
 
         }
@@ -82,7 +78,7 @@ const postController = {
                         status: 'error',
                         error: 'post does not exist'
                     });
-                }
+                };
 
                 // body values
                 const title = req.body.title || checkQuery.rows[0].title;
@@ -92,23 +88,17 @@ const postController = {
                 const modify = `UPDATE posts SET title=$1, post=$2, updated_on=$3 WHERE post_id=$4 RETURNING *`;
                 const value = [title, post, new Date().toLocaleString(), id];
                 const modifyQuery = await pool.query(modify, value)
-                if ( modifyQuery.rows[0].post_id === post_id) {
-                    // update response
-                    res.status(200).json({
-                        status: 'success',
-                        data: {
-                            message: 'post successfully updated',
-                            title: title,
-                            post: post,
-                            updated_on: modifyQuery.rows[0].updated_on
-                        }
-                    })
-                } else {
-                    res.status(400).json({
-                        status: 'error',
-                        error: 'post not updated'
-                    });
-                }
+
+                // update response
+                res.status(200).json({
+                    status: 'success',
+                    data: {
+                        message: 'post successfully updated',
+                        title: title,
+                        post: post,
+                        updated_on: modifyQuery.rows[0].updated_on
+                    }
+                });
             });
 
         }
@@ -130,25 +120,31 @@ const postController = {
                     });
                 };
 
+                // select an post query
+                const check = `SELECT * FROM posts WHERE post_id=$1`;
+                const checkValue = [id];
+                const checkQuery = await pool.query(check, checkValue);
+
+                // post check response
+                if (!checkQuery.rows[0]) {
+                    return res.status(400).json({
+                        status: 'error',
+                        error: 'post does not exist'
+                    });
+                };
+
                 // delete post query
                 const remove = `DELETE FROM posts WHERE post_id=$1`;
                 const value = [id];
                 const removeQuery = await pool.query(remove, value);
 
-                if ( removeQuery.rows[0].post_id === id) {
-                    // delete response
-                    res.status(200).json({
-                        status: 'success',
-                        data: {
-                            message: 'post successfully deleted'
-                        }
-                    });
-                } else {
-                    res.status(400).json({
-                        status: 'error',
-                        error: 'post not deleted'
-                    });
-                }
+                // delete response
+                res.status(200).json({
+                    status: 'success',
+                    data: {
+                        message: 'post successfully deleted'
+                    }
+                });
 
             })
         }

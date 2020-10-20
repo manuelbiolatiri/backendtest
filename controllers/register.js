@@ -37,8 +37,8 @@ const register = {
             // admin signup
             else if (process.env.ADMIN_EMAIL === email && process.env.ADMIN_PASSWORD === password) {
                 const AdminSignupQuery = `INSERT INTO users (firstName, lastName, email, password, gender, createdon)
-                VALUES($1, $2, $3, $4, $5, now()) RETURNING *`;
-                const values = [firstName, lastName, email, hashedPassword, gender];
+                VALUES($1, $2, $3, $4, $5, $6) RETURNING *`;
+                const values = [firstName, lastName, email, hashedPassword, gender, new Date().toLocaleString()];
                 const adminResult = await pool.query(AdminSignupQuery, values);
 
                 // generate admin token

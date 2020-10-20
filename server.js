@@ -10,6 +10,7 @@ const app = express();
 
 // routers
 const userRouter = require('./routes/register');
+const postRouter = require('./routes/post');
 
 // configure cors
 app.use(cors());
@@ -37,6 +38,7 @@ app.get('/', (req, res) => {
 
 // app router
 app.use('/api/v1/', userRouter);
+app.use('/api/v1/', postRouter);
 
 // wronge routes
 app.use('*', (req, res) => {

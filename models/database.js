@@ -21,7 +21,7 @@ pool.on('connect', () => {})
 const userTable = async () => {
     const userTableQuery = `CREATE TABLE IF NOT EXISTS
     users(
-        userId SERIAL PRIMARY KEY NOT NULL UNIQUE,
+        user_id SERIAL PRIMARY KEY NOT NULL UNIQUE,
         firstName VARCHAR(50) NOT NULL,
         lastName VARCHAR(50) NOT NULL,
         email VARCHAR(50) NOT NULL,
@@ -39,8 +39,33 @@ const userTable = async () => {
     }
 };
 
+// post table
+const postTable = async () => {
+    const postTableQuery = `CREATE TABLE IF NOT EXISTS
+    posts(
+        post_id SERIAL PRIMARY KEY NOT NULL UNIQUE,
+        user_id INT NOT NULL,
+        title VARCHAR(100) NOT NULL,
+        post VARCHAR(5000) NOT NULL,
+        createdon VARCHAR(50) NOT NULL,
+        updated_on VARCHAR(50),
+        FOREIGN KEY(user_id) REFERENCES users(user_id)  ON DELETE CASCADE ON UPDATE CASCADE
+    )`;
+
+    try{
+        await pool.query(postTableQuery);
+        console.log('posts table created');
+    }
+    catch(e) {
+        console.log(e)
+    }
+};
+
+
 // user
 userTable();
+// post
+postTable();
 
 // export pool to controllers
 module.exports = pool;

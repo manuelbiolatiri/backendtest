@@ -32,23 +32,37 @@ const comments = {
                 const checkValue = [id];
                 const checkQuery = await pool.query(check, checkValue);
 
+                // post check response
+                if (!checkQuery.rows[0]) {
+                    return res.status(400).json({
+                        status: 'error',
+                        error: 'post does not exist'
+                    });
+                }
+
                 // selected post comment query
                 const comments = `INSERT INTO post_comments (comment, createdOn, user_id, post_id)
                                 VALUES($1, $2, $3, $4) RETURNING *`;
                 const values = [comment, new Date().toLocaleString(), user_id, id];
                 const commentQuery = await pool.query(comments, values);
-                
-                // comment response
-                res.status(201).json({
-                    status: 'success',
-                    data: {
-                        message: 'Comment successfully created',
-                        createdOn: commentQuery.rows[0].createdon,
-                        postTitle: checkQuery.rows[0].title,
-                        post: checkQuery.rows[0].post,
-                        comment: commentQuery.rows[0].comment
-                    }
-                })
+                if ( commentQuery.rows[0].user_id === user_id && comment === commentQuery.rows[0].comment ) {
+                    // comment response
+                    res.status(201).json({
+                        status: 'success',
+                        data: {
+                            message: 'Comment successfully created',
+                            createdOn: commentQuery.rows[0].createdon,
+                            postTitle: checkQuery.rows[0].title,
+                            post: checkQuery.rows[0].post,
+                            comment: commentQuery.rows[0].comment
+                        }
+                    })
+                } else {
+                    res.status(400).json({
+                        status: 'error',
+                        error: 'comment not created'
+                    });
+                }
             })
         }
         catch (e) {

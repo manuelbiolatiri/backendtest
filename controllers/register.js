@@ -46,7 +46,7 @@ const register = {
                     res.status(201).json({
                         message: 'admin account successfully created',
                         token,
-                        adminId: adminResult.rows[0].authorid
+                        adminId: adminResult.rows[0].user_id
                     });
                 });
             }
@@ -57,18 +57,25 @@ const register = {
                 const userValue = [firstName, lastName, email, hashedPassword, gender];
                 const signUpQuerys = await pool.query(signUpQuery, userValue);
 
-                // generate user token
-                jwt.sign({ email, password }, process.env.SECRET_KEY, { expiresIn: '24h' }, (err, token) => {
-                    // token response
-                    res.status(201).json({
-                        status: 'success',
-                        data: {
-                            message: 'user account successfully created',
-                            token,
-                            authorId: signUpQuerys.rows[0].authorid
-                        }
+                if (email === signUpQuerys.rows[0].email) {
+                    // generate user token
+                    jwt.sign({ email, password }, process.env.SECRET_KEY, { expiresIn: '24h' }, (err, token) => {
+                        // token response
+                        res.status(201).json({
+                            status: 'success',
+                            data: {
+                                message: 'user account successfully created',
+                                token,
+                                userId: signUpQuerys.rows[0].user_id
+                            }
+                        })
                     })
-                })
+                } else {
+                    res.status(400).json({
+                        status: 'error',
+                        error: 'account not created'
+                    });
+                }
             };
         }
         catch (e) {
@@ -111,7 +118,7 @@ const register = {
                             message: 'admin successfully loged in',
                             data: {
                                 token,
-                                adminId: logInQuery.rows[0].authorid
+                                adminId: logInQuery.rows[0].user_id
                             }
                         });
                     });
@@ -124,7 +131,7 @@ const register = {
                             message: 'user successfully loged in',
                             data: {
                                 token,
-                                authorId: logInQuery.rows[0].authorid
+                                userId: logInQuery.rows[0].user_id
                             }
                         })
                     })

@@ -1,17 +1,20 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import dotenv from 'dotenv';
-import cors from 'cors';
+const express = require('express');
+const bodyParser = require('body-parser');
+const dotenv = require('dotenv');
+const cors = require('cors');
  
 dotenv.config();
 
 // instantiate express
 const app = express();
 
+// routers
+const userRouter = require('./routes/register');
+
 // configure cors
 app.use(cors());
 
-const port = process.env.PORT || 3006;
+const port = process.env.PORT || 3001;
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
@@ -32,6 +35,9 @@ app.get('/', (req, res) => {
     }))
 })
 
+// app router
+app.use('/api/v1/', userRouter);
+
 // wronge routes
 app.use('*', (req, res) => {
     res.status(404).json({
@@ -44,4 +50,4 @@ app.listen(port,() => {
     console.log(`app is running on ${port}`)
 })
 
-export default app;
+module.exports = app;

@@ -14,6 +14,7 @@ const userRouter = require('./routes/register');
 const postRouter = require('./routes/post');
 const commentRouter = require('./routes/comment');
 const imageRouter = require('./routes/image');
+const getRouter = require('./routes/getPost');
 
 // configure cors
 app.use(cors());
@@ -49,6 +50,7 @@ app.use('/api/v1/', userRouter);
 app.use('/api/v1/', postRouter);
 app.use('/api/v1/', commentRouter);
 app.use('/api/v1/', imageRouter);
+app.use('/api/v1/', getRouter);
 
 // wronge routes
 app.use('*', (req, res) => {

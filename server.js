@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const fileUpload = require('express-fileupload');
  
 dotenv.config();
 
@@ -12,6 +13,7 @@ const app = express();
 const userRouter = require('./routes/register');
 const postRouter = require('./routes/post');
 const commentRouter = require('./routes/comment');
+const imageRouter = require('./routes/image');
 
 // configure cors
 app.use(cors());
@@ -29,6 +31,11 @@ app.use((req, res, next) => {
 // configure bodyparser
 app.use(bodyParser.json({ extended : true }));
 
+// configure file-upload
+app.use(fileUpload({
+    useTempFiles: true
+}))
+
 // welcome route
 app.get('/', (req, res) => {
     res.status(200).json(({
@@ -41,6 +48,7 @@ app.get('/', (req, res) => {
 app.use('/api/v1/', userRouter);
 app.use('/api/v1/', postRouter);
 app.use('/api/v1/', commentRouter);
+app.use('/api/v1/', imageRouter);
 
 // wronge routes
 app.use('*', (req, res) => {

@@ -1,17 +1,25 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import dotenv from 'dotenv';
-import cors from 'cors';
+const express = require('express');
+const bodyParser = require('body-parser');
+const dotenv = require('dotenv');
+const cors = require('cors');
+const fileUpload = require('express-fileupload');
  
 dotenv.config();
 
 // instantiate express
 const app = express();
 
+// routers
+const userRouter = require('./routes/register');
+const postRouter = require('./routes/post');
+const commentRouter = require('./routes/comment');
+const imageRouter = require('./routes/image');
+const getRouter = require('./routes/getPost');
+
 // configure cors
 app.use(cors());
 
-const port = process.env.PORT || 3006;
+const port = process.env.PORT || 3001;
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
@@ -24,6 +32,11 @@ app.use((req, res, next) => {
 // configure bodyparser
 app.use(bodyParser.json({ extended : true }));
 
+// configure file-upload
+app.use(fileUpload({
+    useTempFiles: true
+}))
+
 // welcome route
 app.get('/', (req, res) => {
     res.status(200).json(({
@@ -31,6 +44,13 @@ app.get('/', (req, res) => {
         message: 'welcome to the blog api'
     }))
 })
+
+// app router
+app.use('/api/v1/', userRouter);
+app.use('/api/v1/', postRouter);
+app.use('/api/v1/', commentRouter);
+app.use('/api/v1/', imageRouter);
+app.use('/api/v1/', getRouter);
 
 // wronge routes
 app.use('*', (req, res) => {
@@ -44,4 +64,4 @@ app.listen(port,() => {
     console.log(`app is running on ${port}`)
 })
 
-export default app;
+module.exports = app;
